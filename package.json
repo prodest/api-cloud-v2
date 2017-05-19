@@ -1,0 +1,46 @@
+{
+  "name": "api-cloud-v2",
+  "version": "1.0.0",
+  "description": "API para upgrade na cloud",
+  "main": "bin/www",
+  "scripts": {
+    "prebuild": "npm run static",
+    "build": "tsc -w -p .",
+    "directories": "find server -type d | sed \"s|^server/|build/|\" | xargs mkdir -p",
+    "prestatic": "npm run directories",
+    "static": "echo \"Copiando arquivos estáticos\" && find server -type f ! -name \"*.ts\" | sed \"s|^server/||\" | xargs \"-I{}\" cp \"server/{}\" \"build/{}\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/prodest/api-cloud-v2.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/prodest/api-cloud-v2/issues"
+  },
+  "homepage": "https://github.com/prodest/api-cloud-v2#readme",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "compression": "^1.6.2",
+    "cors": "^2.8.3",
+    "dotenv": "^4.0.0",
+    "express": "^4.15.3",
+    "morgan": "^1.8.1",
+    "request": "^2.81.0",
+    "request-promise": "^4.2.1"
+  },
+  "devDependencies": {
+    "@types/body-parser": "^1.16.3",
+    "@types/compression": "^0.0.33",
+    "@types/cors": "^2.8.1",
+    "@types/dotenv": "^4.0.0",
+    "@types/express": "^4.0.35",
+    "@types/morgan": "^1.7.32",
+    "@types/node": "^7.0.18",
+    "@types/request-promise": "^4.1.33",
+    "tslint": "^5.2.0",
+    "typescript": "^2.3.2"
+  }
+}

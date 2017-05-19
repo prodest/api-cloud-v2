@@ -1,0 +1,24 @@
+{
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "declaration": true,
+    "compilerOptions": {
+        "outDir": "build",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators":true,
+        "target": "es6",
+        "module": "commonjs",
+        "sourceMap": true,
+        "noImplicitAny": true,
+        "noImplicitThis" : true,
+        "noImplicitReturns": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters" : false
+    },
+    "include": [
+        "server"
+    ],
+    "exclude": [
+        "node_modules",
+        "jspm_packages"
+    ]
+}
