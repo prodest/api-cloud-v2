@@ -15,21 +15,47 @@ export class UpgradeController {
         };
     }
 
-    public async upgradeService ( req: Request ): Promise<string> {
+    private validateUpgradeData ( data: IUpgradeRequestData ) {
+        if ( !data.environment ) {
+            throw new Error( 'Environment name is required.' );
+        }
+        if ( !data.stack ) {
+            throw new Error( 'Stack name is required.' );
+        }
+        if ( !data.service ) {
+            throw new Error( 'Service name is required.' );
+        }
+    }
+
+    private notFoundError ( obj: any, name: string ) {
+        if ( !obj ) {
+            const err = new Error( `${name} not found.` );
+            throw err;
+        }
+    }
+
+    public async upgradeService ( req: Request ): Promise<any> {
         const data: IUpgradeRequestData = req.body;
         const basicOptions = this.getBasicOptions( req );
 
+        this.validateUpgradeData( data );
+
         const rancherURL = 'http://cloud.datacenter.es.gov.br.local/v1/projects/';
         const rancherData: { data: IRancherAPIData[] } = await request( rancherURL, basicOptions );
-        const envId = rancherData.data.find( d => d.name === data.environment && d.type === 'project' ).id;
+        const env = rancherData.data.find( d => d.name === data.environment && d.type === 'project' );
+        this.notFoundError( env, `Environment ${data.environment}` );
+        const envId = env.id;
 
         const envURL = `http://cloud.datacenter.es.gov.br.local/v1/projects/${envId}/environments`;
         const envData: { data: IRancherAPIData[] } = await request( envURL, basicOptions );
-        const stackId = envData.data.find( d => d.name === data.stack && d.type === 'environment' ).id;
+        const stack = envData.data.find( d => d.name === data.stack && d.type === 'environment' );
+        this.notFoundError( stack, `Stack ${data.stack}` );
+        const stackId = stack.id;
 
         const stackURL = `http://cloud.datacenter.es.gov.br.local/v1/projects/${envId}/environments/${stackId}/services`;
         const stackData: { data: IServiceData[] } = await request( stackURL, basicOptions );
         const service = stackData.data.find( d => d.name === data.service && d.type === 'service' );
+        this.notFoundError( service, `Service ${data.service}` );
 
         const serviceLinksURL = `http://cloud.datacenter.es.gov.br.local/v1/serviceconsumemaps?serviceId=${service.id}`;
         const serviceLinksData: { data: IServiceLinksData[] } = await request( serviceLinksURL, basicOptions );
@@ -48,7 +74,7 @@ export class UpgradeController {
                 startFirst: data.startFirst
             } )
         };
-        upgradeBody.inServiceStrategy.launchConfig.containerImageName = data.image || service.launchConfig.containerImageName;
+        upgradeBody.inServiceStrategy.launchConfig.imageUuid = `docker:${data.image}` || service.launchConfig.containerImageName;
 
         await request( upgradeURL, Object.assign( {
             method: 'POST',
@@ -64,7 +90,7 @@ export class UpgradeController {
             body: setServiceLinksBody
         }, basicOptions ) );
 
-        return service.id;
+        return service;
     }
 
     public async finishUpgrade ( req: Request, serviceId: string ): Promise<any> {

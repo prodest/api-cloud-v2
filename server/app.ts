@@ -47,7 +47,7 @@ class MainApp {
     if ( this.app.get( 'env' ) === 'development' ) {
       this.app.use( function ( err: any, req: Request, res: Response, next: Function ) {
         console.error( err );
-        res.status( err.statusCode || 500 ).json( err );
+        res.status( err.statusCode || 500 ).json( { error: err.message, stack: err.stack } );
       } );
     }
 
@@ -55,7 +55,7 @@ class MainApp {
     // no stacktraces leaked to user
     this.app.use(( err: any, req: Request, res: Response, next: Function ) => {
       console.error( err );
-      res.status( err.statusCode || 500 ).json( err.message );
+      res.status( err.statusCode || 500 ).json( { error: err.message } );
     } );
     return this.app;
   }
