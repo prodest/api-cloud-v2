@@ -2,7 +2,7 @@ import { Request } from 'express';
 import * as request from 'request-promise';
 import { IRancherAPIData, IServiceData, IServiceLinksData, IUpgradeData, IUpgradeRequestData } from '../models/interfaces';
 import { UpgradeData } from '../models';
-
+import { AppConfig } from '../config';
 
 export class UpgradeController {
 
@@ -40,31 +40,31 @@ export class UpgradeController {
 
         this.validateUpgradeData( data );
 
-        const rancherURL = 'http://cloud.datacenter.es.gov.br.local/v1/projects/';
+        const rancherURL = `${AppConfig.cloudURL}/projects/`;
         const rancherData: { data: IRancherAPIData[] } = await request( rancherURL, basicOptions );
         const env = rancherData.data.find( d => d.name === data.environment && d.type === 'project' );
         this.notFoundError( env, `Environment ${data.environment}` );
         const envId = env.id;
 
-        const envURL = `http://cloud.datacenter.es.gov.br.local/v1/projects/${envId}/environments`;
+        const envURL = `${AppConfig.cloudURL}/projects/${envId}/environments`;
         const envData: { data: IRancherAPIData[] } = await request( envURL, basicOptions );
         const stack = envData.data.find( d => d.name === data.stack && d.type === 'environment' );
         this.notFoundError( stack, `Stack ${data.stack}` );
         const stackId = stack.id;
 
-        const stackURL = `http://cloud.datacenter.es.gov.br.local/v1/projects/${envId}/environments/${stackId}/services`;
+        const stackURL = `${AppConfig.cloudURL}/projects/${envId}/environments/${stackId}/services`;
         const stackData: { data: IServiceData[] } = await request( stackURL, basicOptions );
         const service = stackData.data.find( d => d.name === data.service && d.type === 'service' );
         this.notFoundError( service, `Service ${data.service}` );
 
-        const serviceLinksURL = `http://cloud.datacenter.es.gov.br.local/v1/serviceconsumemaps?serviceId=${service.id}`;
+        const serviceLinksURL = `${AppConfig.cloudURL}/serviceconsumemaps?serviceId=${service.id}`;
         const serviceLinksData: { data: IServiceLinksData[] } = await request( serviceLinksURL, basicOptions );
         const serviceLinks = serviceLinksData.data.map( sl => ( {
             name: sl.name,
             serviceId: sl.consumedServiceId
         } ) );
 
-        const upgradeURL = `http://cloud.datacenter.es.gov.br.local/v1/services/${service.id}/?action=upgrade`;
+        const upgradeURL = `${AppConfig.cloudURL}/services/${service.id}/?action=upgrade`;
         const upgradeBody: { inServiceStrategy: IUpgradeData } = {
             inServiceStrategy: new UpgradeData( {
                 batchSize: data.batchSize,
@@ -81,7 +81,7 @@ export class UpgradeController {
             body: upgradeBody
         }, basicOptions ) );
 
-        const setServiceLinksURL = `http://cloud.datacenter.es.gov.br.local/v1/services/${service.id}/?action=setservicelinks`;
+        const setServiceLinksURL = `${AppConfig.cloudURL}/services/${service.id}/?action=setservicelinks`;
         const setServiceLinksBody: { serviceLinks: any[] } = {
             serviceLinks: serviceLinks
         };
@@ -96,11 +96,11 @@ export class UpgradeController {
     public async finishUpgrade ( req: Request, serviceId: string ): Promise<any> {
         const basicOptions = this.getBasicOptions( req );
 
-        const serviceURL = `http://cloud.datacenter.es.gov.br.local/v1/services/${serviceId}`;
+        const serviceURL = `${AppConfig.cloudURL}/services/${serviceId}`;
         const serviceData: IServiceData = await request( serviceURL, basicOptions );
 
         if ( serviceData.state === 'upgraded' ) {
-            const finishUpgradeURL = `http://cloud.datacenter.es.gov.br.local/v1/services/${serviceId}/?action=finishupgrade`;
+            const finishUpgradeURL = `${AppConfig.cloudURL}/services/${serviceId}/?action=finishupgrade`;
             await request( finishUpgradeURL, Object.assign( { method: 'POST' }, basicOptions ) );
             return 'ok';
         }

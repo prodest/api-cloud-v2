@@ -5,13 +5,13 @@ import { UpgradeRouter } from './upgrade.router';
 
 export namespace main {
     
-    export const callRoutes = ( app: Application, appConfig: AppConfig ): Application => {
+    export const callRoutes = ( app: Application ): Application => {
         const router: Router = Router();
 
         router.use( '/api/v1/ping', new PingRouter().getRouter() );
         router.use( '/api/v1/upgrade', new UpgradeRouter().getRouter() );
 
-        app.use ( appConfig.requestPath || '', router );
+        app.use ( AppConfig.requestPath, router );
         return app;
     };
 }

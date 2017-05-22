@@ -4,7 +4,6 @@ import * as compression from 'compression';
 import { Request, Response } from 'express';
 import * as express from 'express';
 import * as morgan from 'morgan';
-import { AppConfig } from './config';
 import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
 
@@ -16,11 +15,9 @@ import * as routes from './routes';
 class MainApp {
 
   public app: express.Application;
-  private config: AppConfig;
 
   constructor() {
     this.app = express();
-    this.config = new AppConfig();
 
     this.handleParsers();
 
@@ -28,7 +25,7 @@ class MainApp {
 
     this.app.use( cors() );
 
-    routes.main.callRoutes( this.app, this.config );
+    routes.main.callRoutes( this.app );
 
     this.handleError();
   }
