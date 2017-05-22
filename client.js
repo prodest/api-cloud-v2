@@ -18,9 +18,42 @@ const apiEndpoint = process.env.API_ENDPOINT;
 var upgradeEndpoint = apiEndpoint + '/upgrade';
 var finishEndpoint = apiEndpoint + '/upgrade/finish';
 
+function validateUpgradeData ( data ) {
+    if ( !data.environment ) {
+        throw new Error( 'Environment name is required.' );
+    }
+    if ( !data.stack ) {
+        throw new Error( 'Stack name is required.' );
+    }
+    if ( !data.service ) {
+        throw new Error( 'Service name is required.' );
+    }
+}
+
+function parseInfo( status ) {
+    return {
+        name: status.name,
+        state: status.state,
+        description: status.description,
+        healthState: status.healthState,
+        imageUuid: status.launchConfig ? status.launchConfig.imageUuid: undefined,
+        scale: status.scale,
+        startOnCreate: status.startOnCreate,
+        transitioning: status.transitioning,
+        transitioningMessage: status.transitioningMessage,
+        transitioningProgress: status.transitioningProgress,
+        upgrade: status.upgrade,
+        uuid: status.uuid
+    }
+}
+
 function requestUpgrade () {
     var options = {
         uri: upgradeEndpoint,
+        auth: {
+            user: rancherAccessKey,
+            pass: rancherSecretKey
+        },
         headers: {
             'User-Agent': 'Request-Promise'
         },
@@ -38,15 +71,22 @@ function requestUpgrade () {
         json: true
     };
 
+    validateUpgradeData( options.body );
+
     return request( options );
 }
 
 function requestFinish ( serviceId ) {
     var options = {
         uri: finishEndpoint + '/' + serviceId,
+        auth: {
+            user: rancherAccessKey,
+            pass: rancherSecretKey
+        },
         headers: {
             'User-Agent': 'Request-Promise'
         },
+        method: 'POST',
         json: true
     };
 
@@ -55,36 +95,43 @@ function requestFinish ( serviceId ) {
 
 function tryFinish ( serviceId, n ) {
     return Promise.delay( 10000 )
-    .then(() => {
-        console.log( '\nChecking status...' );
+        .then(() => {
+            console.log( '\nChecking status...' );
 
-        return requestFinish( serviceId );
-    } )
-    .then( status => {
-        if ( status === 'ok' ) {
-            return status;
-        } else if ( n > 240 ) { // 240 times * 10s == 2400s == 40min
-            return Promise.reject( status );
-        } else {
-            console.log( status );
-            return tryFinish( serviceId, n + 1 );
-        }
-    } )
+            return requestFinish( serviceId );
+        } )
+        .then( status => {
+            if ( status === 'ok' ) {
+                return status;
+            } else if ( n > 240 ) { // 240 times * 10s == 2400s == 40min
+                
+                console.log( 'Timeout expired.\nService info:' );
+                console.log( status )
+
+                return Promise.reject( new Error( 'Timeout expired.' ) );
+            } else {
+
+                console.log( 'Not finished.' );
+                console.log( parseInfo( status ) );
+                
+                return tryFinish( serviceId, n + 1 );
+            }
+        } )
 }
 
 requestUpgrade()
-.then( service => {
-    const serviceId = service.id;
+    .then( service => {
+        const serviceId = service.id;
 
-    return tryFinish( serviceId, 0 );
-} )
-.then( result => {
-    console.log( '\n\nFinished with success.' );
+        return tryFinish( serviceId, 0 );
+    } )
+    .then( result => {
+        console.log( '\nFinished with success.' );
 
-    process.exit( 0 );
-} )
-.catch( err => {
-    console.log( err );
+        process.exit( 0 );
+    } )
+    .catch( err => {
+        console.log( err.message );
 
-    process.exit( 1 );
-} );
+        process.exit( 1 );
+    } );

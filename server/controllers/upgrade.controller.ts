@@ -74,7 +74,10 @@ export class UpgradeController {
                 startFirst: data.startFirst
             } )
         };
-        upgradeBody.inServiceStrategy.launchConfig.imageUuid = `docker:${data.image}` || service.launchConfig.containerImageName;
+
+        if ( data.image ) {
+            upgradeBody.inServiceStrategy.launchConfig.imageUuid = `docker:${data.image}`;
+        }
 
         await request( upgradeURL, Object.assign( {
             method: 'POST',
