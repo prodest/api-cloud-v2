@@ -10,7 +10,7 @@
         {
             "isBuildCommand": true,
             "taskName": "build",
-            "args": ["build"]
+            "args": ["build:watch"]
         },
         {
             "taskName": "install",

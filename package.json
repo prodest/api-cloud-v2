@@ -5,11 +5,13 @@
   "main": "bin/www",
   "scripts": {
     "prebuild": "npm run static",
-    "build": "tsc -w -p .",
+    "build": "tsc -p .",
+    "build:watch": "tsc -w -p .",
     "directories": "find server -type d | sed \"s|^server/|build/|\" | xargs mkdir -p",
     "prestatic": "npm run directories",
     "static": "echo \"Copiando arquivos estáticos\" && find server -type f ! -name \"*.ts\" | sed \"s|^server/||\" | xargs \"-I{}\" cp \"server/{}\" \"build/{}\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node build/bin/www"
   },
   "repository": {
     "type": "git",
@@ -22,11 +24,13 @@
   },
   "homepage": "https://github.com/prodest/api-cloud-v2#readme",
   "dependencies": {
+    "bluebird": "^3.5.0",
     "body-parser": "^1.17.2",
     "compression": "^1.6.2",
     "cors": "^2.8.3",
     "dotenv": "^4.0.0",
     "express": "^4.15.3",
+    "minimist": "^1.2.0",
     "morgan": "^1.8.1",
     "request": "^2.81.0",
     "request-promise": "^4.2.1"

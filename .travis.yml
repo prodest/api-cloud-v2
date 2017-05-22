@@ -1,0 +1,14 @@
+require: sudo
+language: node_js
+services:
+  - docker
+env:
+  - DOCKER_IMAGE=prodest/api-cloud-v2
+script:
+  /bin/sh .travis.sh
+deploy:
+  provider: script
+  script: /bin/sh .deploy.sh
+  on:
+    all_branches: true
+    condition: $TRAVIS_BRANCH =~ ^v[0-9]+\.[0-9]+\.[0-9]*$
