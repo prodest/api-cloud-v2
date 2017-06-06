@@ -119,6 +119,8 @@ function tryFinish ( serviceId, n ) {
         } )
 }
 
+console.log( `Upgrading:\n - Service ${serviceName}\n - Stack ${stackName}\n - Environment: ${envName}\n - Image ${imageName}.` );
+
 requestUpgrade()
     .then( service => {
         const serviceId = service.id;
