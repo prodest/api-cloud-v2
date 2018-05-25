@@ -12,7 +12,23 @@
             "outFiles": [
                 "${workspaceRoot}/build/**/*.js"
             ],
-            "sourceMaps": true
+            "sourceMaps": true,
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Index",
+            "program": "${workspaceRoot}/index.js",
+            "args": [
+                "--SERVICE_ID=1s73",
+                "--IMAGE=redis"
+            ],
+            "outFiles": [
+                "${workspaceRoot}/build/**/*.js"
+            ],
+            "sourceMaps": true,
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }

@@ -57,6 +57,14 @@ typings/
 # dotenv environment variables file
 .env
 
-build/
-
+server/
+.vscode/
+*.sh
+yarn.lock
+README.md
+tsconfig.json
+tslint.json
 codealike.json
+Dockerfile
+.travis.yml
+**/*.map

@@ -11,8 +11,8 @@ export class AppConfig {
         return this.getEnv( 'REQUEST_PATH' ) || '';
     }
 
-    public static get cloudURL(): string {
-        return this.getEnv( 'TARGET_URL' );
+    public static get rancherURL(): string {
+        return this.getEnv( 'RANCHER_URL' ) || this.getEnv( 'TARGET_URL' );
     }
 
     private static getEnv ( key: string ): string {

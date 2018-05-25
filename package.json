@@ -1,8 +1,9 @@
 {
-  "name": "api-cloud-v2",
+  "name": "@beebee-logistica/upgrade-rancher",
   "version": "1.0.0",
-  "description": "API para upgrade na cloud",
-  "main": "bin/www",
+  "description": "Client para upgrade de um serviço no Rancher",
+  "main": "index.js",
+  "bin": "./index.js",
   "scripts": {
     "prebuild": "npm run static",
     "build": "tsc -p .",
@@ -24,6 +25,7 @@
   },
   "homepage": "https://github.com/prodest/api-cloud-v2#readme",
   "dependencies": {
+    "base-64": "^0.1.0",
     "bluebird": "^3.5.0",
     "body-parser": "^1.17.2",
     "compression": "^1.6.2",
@@ -33,7 +35,8 @@
     "minimist": "^1.2.0",
     "morgan": "^1.8.1",
     "request": "^2.81.0",
-    "request-promise": "^4.2.1"
+    "request-promise": "^4.2.1",
+    "utf8": "^3.0.0"
   },
   "devDependencies": {
     "@types/body-parser": "^1.16.3",
@@ -44,6 +47,7 @@
     "@types/morgan": "^1.7.32",
     "@types/node": "^7.0.18",
     "@types/request-promise": "^4.1.33",
+    "tsc": "^1.20150623.0",
     "tslint": "^5.2.0",
     "typescript": "^2.3.2"
   }
