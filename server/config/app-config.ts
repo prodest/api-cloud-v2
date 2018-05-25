@@ -12,7 +12,7 @@ export class AppConfig {
     }
 
     public static get rancherURL(): string {
-        return this.getEnv( 'RANCHER_URL' ) || this.getEnv( 'TARGET_URL' );
+        return this.getEnv( 'RANCHER_URL' ) || this.getEnv( 'CATTLE_URL' ) || this.getEnv( 'TARGET_URL' );
     }
 
     private static getEnv ( key: string ): string {

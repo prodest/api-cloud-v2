@@ -93,8 +93,8 @@ function validateUpgradeData ( data ) {
 }
 
 function getAuthorization () {
-    const rancherAccessKey = process.env.RANCHER_ACCESS_KEY;
-    const rancherSecretKey = process.env.RANCHER_SECRET_KEY;
+    const rancherAccessKey = process.env.RANCHER_ACCESS_KEY || process.env.CATTLE_ACCESS_KEY;
+    const rancherSecretKey = process.env.RANCHER_SECRET_KEY || process.env.CATTLE_SECRET_KEY;
 
     if ( !rancherAccessKey ) {
         throw new Error( 'Rancher Access Key is required..' );
