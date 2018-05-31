@@ -1,6 +1,6 @@
 {
   "name": "@beebee-logistica/upgrade-rancher",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "Client para upgrade de um serviço no Rancher",
   "main": "index.js",
   "bin": "./index.js",
