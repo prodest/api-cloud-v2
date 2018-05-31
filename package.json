@@ -14,8 +14,7 @@
     "static": "echo \"Copiando arquivos estáticos\" && find server -type f ! -name \"*.ts\" | sed \"s|^server/||\" | xargs \"-I{}\" cp \"server/{}\" \"build/{}\"",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node build/bin/www",
-    "prepublishOnly": "npm run clean && npm run build && npm prune --production",
-    "postpublish": "npm i"
+    "prepublishOnly": "npm run clean && npm run build"
   },
   "repository": {
     "type": "git",
