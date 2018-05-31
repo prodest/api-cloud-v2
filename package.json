@@ -5,6 +5,7 @@
   "main": "index.js",
   "bin": "./index.js",
   "scripts": {
+    "clean": "rimraf build",
     "prebuild": "npm run static",
     "build": "tsc -p .",
     "build:watch": "tsc -w -p .",
@@ -12,7 +13,9 @@
     "prestatic": "npm run directories",
     "static": "echo \"Copiando arquivos estáticos\" && find server -type f ! -name \"*.ts\" | sed \"s|^server/||\" | xargs \"-I{}\" cp \"server/{}\" \"build/{}\"",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node build/bin/www"
+    "start": "node build/bin/www",
+    "prepublishOnly": "npm run clean && npm run build && npm prune --production",
+    "postpublish": "npm i"
   },
   "repository": {
     "type": "git",
@@ -47,7 +50,7 @@
     "@types/morgan": "^1.7.32",
     "@types/node": "^7.0.18",
     "@types/request-promise": "^4.1.33",
-    "tsc": "^1.20150623.0",
+    "rimraf": "^2.6.2",
     "tslint": "^5.2.0",
     "typescript": "^2.3.2"
   }
