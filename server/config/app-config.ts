@@ -1,29 +1,33 @@
 /**
- * This class have all application config
+ * This class have all application configs
  */
 export class AppConfig {
 
-    public static get isProd(): boolean {
+    public static get isProd (): boolean {
         return ( this.getEnv( 'NODE_ENV' ) === 'production' );
     }
 
-    public static get requestPath(): string {
+    public static get requestPath (): string {
         return this.getEnv( 'REQUEST_PATH' ) || '';
     }
 
-    public static get rancherURL(): string {
-        return this.getEnv( 'RANCHER_URL' ) || this.getEnv( 'CATTLE_URL' ) || this.getEnv( 'TARGET_URL' );
+    public static get rancherURL (): string {
+        return this.getEnv( [ 'RANCHER_URL', 'CATTLE_URL', 'TARGET_URL' ] );
     }
 
-    private static getEnv ( key: string ): string {
-        if ( !process.env[ key ] ) {
-            
-            console.warn( `a variável ${key} não foi definida` );
-            
-            return undefined;
-        } else {
-            return process.env[ key ];
-        }
-    }
+    private static getEnv ( keys: string[] | string ): string {
+        keys = [].concat( keys );
+        let errors = 'Alguma das variáveis a seguir deve ser definida: ';
 
+        keys.forEach( k => {
+            if ( !process.env[ k ] ) {
+                errors += `${k} `;
+            } else {
+                return process.env[ k ];
+            }
+        } );
+
+        console.warn( errors );
+        return undefined;
+    }
 }
