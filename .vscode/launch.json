@@ -21,8 +21,7 @@
             "name": "Launch Index",
             "program": "${workspaceRoot}/index.js",
             "args": [
-                "--SERVICE_ID=1s73",
-                "--IMAGE=redis"
+                "--SERVICE_ID=1s75"
             ],
             "outFiles": [
                 "${workspaceRoot}/build/**/*.js"

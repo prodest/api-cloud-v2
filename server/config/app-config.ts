@@ -19,13 +19,14 @@ export class AppConfig {
         keys = [].concat( keys );
         let errors = 'Alguma das variáveis a seguir deve ser definida: ';
 
-        keys.forEach( k => {
+        for ( const i in keys ) {
+            const k = keys[ i ];
             if ( !process.env[ k ] ) {
                 errors += `${k} `;
             } else {
                 return process.env[ k ];
             }
-        } );
+        }
 
         console.warn( errors );
         return undefined;
