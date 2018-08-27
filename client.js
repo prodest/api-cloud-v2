@@ -5,6 +5,7 @@ const argv = require( 'minimist' )( process.argv.slice( 2 ) )
 const envName = argv[ 'ENVIRONMENT' ];
 const stackName = argv[ 'STACK' ];
 const serviceName = argv[ 'SERVICE' ];
+const serviceId = argv[ 'SERVICE_ID' ];
 
 const imageName = argv[ 'IMAGE' ];
 const batchSize = argv[ 'BATCH_SIZE' ];
@@ -19,24 +20,26 @@ var upgradeEndpoint = apiEndpoint + '/upgrade';
 var finishEndpoint = apiEndpoint + '/upgrade/finish';
 
 function validateUpgradeData ( data ) {
-    if ( !data.environment ) {
-        throw new Error( 'Environment name is required.' );
-    }
-    if ( !data.stack ) {
-        throw new Error( 'Stack name is required.' );
-    }
-    if ( !data.service ) {
-        throw new Error( 'Service name is required.' );
+    if ( !data.serviceId ) {
+        if ( !data.environment ) {
+            throw new Error( 'Environment name is required.' );
+        }
+        if ( !data.stack ) {
+            throw new Error( 'Stack name is required.' );
+        }
+        if ( !data.service ) {
+            throw new Error( 'Service name is required.' );
+        }
     }
 }
 
-function parseInfo( status ) {
+function parseInfo ( status ) {
     return {
         name: status.name,
         state: status.state,
         description: status.description,
         healthState: status.healthState,
-        imageUuid: status.launchConfig ? status.launchConfig.imageUuid: undefined,
+        imageUuid: status.launchConfig ? status.launchConfig.imageUuid : undefined,
         scale: status.scale,
         startOnCreate: status.startOnCreate,
         transitioning: status.transitioning,
@@ -62,6 +65,7 @@ function requestUpgrade () {
             environment: envName,
             stack: stackName,
             service: serviceName,
+            serviceId: serviceId,
 
             image: imageName,
             batchSize: batchSize,
@@ -95,7 +99,7 @@ function requestFinish ( serviceId ) {
 
 function tryFinish ( serviceId, n ) {
     return Promise.delay( 10000 )
-        .then(() => {
+        .then( () => {
             console.log( '\nChecking status...' );
 
             return requestFinish( serviceId );
@@ -104,7 +108,7 @@ function tryFinish ( serviceId, n ) {
             if ( status === 'ok' ) {
                 return status;
             } else if ( n > 240 ) { // 240 times * 10s == 2400s == 40min
-                
+
                 console.log( 'Timeout expired.\nService info:' );
                 console.log( status )
 
@@ -113,7 +117,7 @@ function tryFinish ( serviceId, n ) {
 
                 console.log( 'Not finished.' );
                 console.log( parseInfo( status ) );
-                
+
                 return tryFinish( serviceId, n + 1 );
             }
         } )

@@ -1,9 +1,11 @@
 
 export interface IUpgradeRequestData {
 
-    environment: string;
-    stack: string;
-    service: string;
+    environment?: string;
+    stack?: string;
+    service?: string;
+
+    serviceId?: string;
     
     image: string;
     batchSize?: number;

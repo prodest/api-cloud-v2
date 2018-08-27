@@ -1,9 +1,11 @@
 {
-  "name": "api-cloud-v2",
-  "version": "1.0.0",
-  "description": "API para upgrade na cloud",
-  "main": "bin/www",
+  "name": "@beebee-logistica/upgrade-rancher",
+  "version": "1.1.6",
+  "description": "Client para upgrade de um serviço no Rancher",
+  "main": "index.js",
+  "bin": "./index.js",
   "scripts": {
+    "clean": "rimraf build",
     "prebuild": "npm run static",
     "build": "tsc -p .",
     "build:watch": "tsc -w -p .",
@@ -11,7 +13,8 @@
     "prestatic": "npm run directories",
     "static": "echo \"Copiando arquivos estáticos\" && find server -type f ! -name \"*.ts\" | sed \"s|^server/||\" | xargs \"-I{}\" cp \"server/{}\" \"build/{}\"",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node build/bin/www"
+    "start": "node build/bin/www",
+    "prepublishOnly": "npm run clean && npm run build"
   },
   "repository": {
     "type": "git",
@@ -24,6 +27,7 @@
   },
   "homepage": "https://github.com/prodest/api-cloud-v2#readme",
   "dependencies": {
+    "base-64": "^0.1.0",
     "bluebird": "^3.5.0",
     "body-parser": "^1.17.2",
     "compression": "^1.6.2",
@@ -33,7 +37,8 @@
     "minimist": "^1.2.0",
     "morgan": "^1.8.1",
     "request": "^2.81.0",
-    "request-promise": "^4.2.1"
+    "request-promise": "^4.2.1",
+    "utf8": "^3.0.0"
   },
   "devDependencies": {
     "@types/body-parser": "^1.16.3",
@@ -44,6 +49,7 @@
     "@types/morgan": "^1.7.32",
     "@types/node": "^7.0.18",
     "@types/request-promise": "^4.1.33",
+    "rimraf": "^2.6.2",
     "tslint": "^5.2.0",
     "typescript": "^2.3.2"
   }
